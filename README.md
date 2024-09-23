@@ -1,2 +1,2 @@
 # Physics-Experiment-SLM
-Physics experiment concerning SLM.
+Physics experiments concerning SLM.
