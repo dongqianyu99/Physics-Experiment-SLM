@@ -5,14 +5,16 @@ import matplotlib.pyplot as plt
 wavelength = 532e-9  # 光的波长（单位：米）
 focal_length = 0.1  # 透镜焦距（单位：米）
 k = 2 * np.pi / wavelength  # 波数
-size = 512  # SLM分辨率
-pixel_size = 10e-6  # SLM像素大小（单位：米）
+size_x = 1980  # SLM分辨率
+size_y = 1080
+pixel_size = 8e-6  # SLM像素大小（单位：米）
+n = 1.55
 
 # 生成相位图
-x = np.linspace(-size//2, size//2, size) * pixel_size
-y = np.linspace(-size//2, size//2, size) * pixel_size
+x = np.linspace(-size_x//2, size_x//2, size_x) * pixel_size
+y = np.linspace(-size_y//2, size_y//2, size_y) * pixel_size
 X, Y = np.meshgrid(x, y)
-phase = (k / (2 * focal_length)) * (X**2 + Y**2)  # 球透镜相位分布
+phase = (k * (n - 1) / (2 * focal_length)) * (X**2 + Y**2)  # 球透镜相位分布
 
 # 将相位限制在 0 到 2π 之间
 phase = np.mod(phase, 2 * np.pi)
