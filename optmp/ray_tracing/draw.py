@@ -56,7 +56,7 @@ def draw_system(Lens):
             else:
                 label_list.append(0)
 
-    label_list1.append([])
+    label_list1.append([])  # label_list1对表面进行分组
     for num in range(m):
         n = len(label_list1)
         if label_list[num] == 0:
