@@ -1,24 +1,60 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.fftpack import *
 
 # 参数设置
-M, N = 1920, 1080 # SLM的分辨率（1920x1080）
-focal_length = 0.1 # 二次曲面透镜的焦距（可以根据需要调整）
-wavelength = 532e-9 # 波长（单位为米），53纳米
-pixel_size = 8e-6  # SLM像素大小（单位：米）
+lam = 0.532e-6  # 波长
+k = 2 * np.pi / lam
+N = 500  # 网格大小
+f = 5e-3  # 焦距
+res = 1e-6  # 分辨率
+zd = 0.001 + np.linspace(0, 0.005, 50)  # 衍射距离
+Nslid = 50  # 滑动层数
 
-# 生成坐标网格
-x = np.linspace(-M // 2, M // 2, N) * pixel_size
-y = np.linspace(-N // 2, N // 2, N) * pixel_size
-X, Y = np.meshgrid(x, y)
+# 初始化网格和场
+x0 = np.linspace(-N/2, N/2, N) * res
+y0 = np.linspace(-N/2, N/2, N) * res
+x0, y0 = np.meshgrid(x0, y0)
 
-# 计算球透镜的相位分布
-R_squared = X**2 + Y**2
-k = 2 * np.pi / wavelength # 波数
-phase_lens = (k * 0.55 / (2 * focal_length)) * R_squared
+fx = np.fft.fftfreq(N, res)  # 频率坐标
+fy = fx
+xout, yout = np.meshgrid(lam * zd[0] * fx, lam * zd[0] * fy)
 
-# 将相位映射到0到2π之间
-phase_lens = np.mod(phase_lens, 2 * np.pi)
+# 初始化场和结果存储
+Ein = np.exp(-1j * (np.pi / lam) * ((x0**2 + y0**2) / f))
+Exy = np.zeros((N, N, Nslid), dtype=complex)
+Eyz = np.zeros((N, Nslid))
 
-# 保存相位图像，保存在代码所在文件夹
-plt.imsave("sphere_lens_phase_1920x1080.png", phase_lens, cmap='gray')
+# 绘图
+plt.figure(figsize=(8, 6))
+
+for slid in range(Nslid):
+    # 计算频域传播因子
+    xout, yout = np.meshgrid(lam * zd[slid] * fx, lam * zd[slid] * fy)
+    F0 = np.exp(1j * k * zd[slid]) / (1j * lam * zd[slid]) * np.exp(1j * k / 2 / zd[slid] * (xout**2 + yout**2))
+    F = np.exp(1j * np.pi / (lam * zd[slid]) * (x0**2 + y0**2))
+
+    # 计算场
+    Exy[:, :, slid] = np.abs(F0 * fftshift(fft2(fftshift(Ein * F))))
+
+    # 取出特定行的电场强度
+    Eyz[:, slid] = Exy[N//2, :, slid]
+
+    # 绘制图像
+    plt.subplot(2, 1, 1)
+    plt.imshow(np.abs(Exy[:, :, slid]), aspect='auto', cmap='jet', extent=[xout[0, 0], xout[0, -1], yout[0, 0], yout[-1, 0]])
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.colorbar()
+    plt.title('Exy Field')
+
+    plt.subplot(2, 1, 2)
+    plt.imshow(np.abs(Eyz), aspect='auto', cmap='jet', extent=[zd[0], zd[-1], yout[0, 0], yout[-1, 0]])
+    plt.xlabel('Z')
+    plt.ylabel('Y')
+    plt.colorbar()
+    plt.title('Eyz Field')
+
+    plt.pause(0.001)  # 用来模拟 MATLAB 中的 pause(eps)，让图像实时更新
+
+plt.show()
