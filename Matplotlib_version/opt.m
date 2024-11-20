@@ -20,9 +20,10 @@ f =  5e-1;
 z = 0.5;
 
 Ain = 10;
-Ein = Ain*exp(-1i*(pi/(lam))*((x0.^2+y0.^2)./f));
-Nslid =  150;
-zd = 0.1+linspace(0,0.5,150);
+%Ein = Ain*exp(-1i*(pi/(lam))*((x0.^2+y0.^2)./f));
+Ein = Ain*(0.5*(exp(1i*(pi/lam)*((x0.^2+y0.^2)./f)) + exp(-1i*(pi/lam)*((x0.^2+y0.^2)./f))));
+Nslid =  1000;
+zd = 0.1+linspace(0,0.6,1000);
 A1 = zeros(N,N,Nslid);
 Exy = zeros(N,N,Nslid);
 Eyz = zeros(N,Nslid);
@@ -36,17 +37,21 @@ for slid = 1:1:Nslid
     %Eyz(:,slid)=Exy(N/2+1,:,slid);
     Eyz(:,slid)=Exy(1,:,slid);
     
-    subplot 211;  
+    %{
+    %subplot 211;  
     imagesc(xout(1,:),yout(:,1),Exy(:,:,slid));    
     colormap("jet");xlabel('X');ylabel('Y')    
-    axis equal;    
+    axis equal;  
+    pause(eps)
+    %}
 
-    subplot 212; 
+    %subplot 212; 
     imagesc(zd,yout(:,1),Eyz);
     % subplot(2,1,2)    
-    colormap("gray");xlabel('Z');ylabel('Y')    
-    %           axis equal    
+    colormap("jet");xlabel('Z');ylabel('Y')    
+    %           axis equal 
     pause(eps)
+
 end
 
 %{
