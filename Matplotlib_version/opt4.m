@@ -1,7 +1,7 @@
 clc,
 clear all;
-N = 512;
-res = 8e-8;
+N = 1024;
+res = 8e-6;
 X = -N/2:N/2-1; 
 Y = -N/2:N/2-1;
 [x0,y0] = meshgrid(X*res,Y*res);
@@ -9,19 +9,23 @@ Y = -N/2:N/2-1;
 fx = -1/(2*res):1/(N*res):1/(2*res)-1/(N*res);
 fy = fx;
 [Fx,Fy] = meshgrid(fx,fy);
-lam = 0.532e-9; k =2*pi/lam;
+lam = 0.532e-6; k =2*pi/lam;
 f = 0.5; 
 
-i = imread("file.png");
+i = imread("9.png");
 lev = graythresh(i);
-u = im2bw(i, lev);
+%u = im2bw(i, lev);
+%gray_image = rgb2gray(i); 
+gray_image = im2gray(i); 
+u = mat2gray(gray_image);
+%imshow(u);
 z1 = 0.4;
-a0 = 0.2;
-x2 = 0: 1: 511;
-y2 = 0: 1: 511;
-for i = 1: 1: 512
-    for j = 1: 1: 512
-        %r(i, j) = sqrt((x2(i) - 216)^2 + (y2(j) - 216)^2 + z1^2);
+a0 = 0.1;
+x2 = 0: 1: 1023;
+y2 = 0: 1: 1023;
+for i = 1: 1: 1024
+    for j = 1: 1: 1024
+        %r(i, j) = sqrt((x2(i) - 512)^2 + (y2(j) - 512)^2 + z1^2);
         U1(i, j) = a0 * exp((-1)^(1/2) * k * z1);
     end
 end
@@ -29,8 +33,8 @@ Ein = U1.*u;
 
 %Ein = Ain*exp(-1i*(pi/(lam))*((x0.^2+y0.^2)./f)); 
 
-Nslid =  1000;
-zd = 0.1+linspace(0,0.3,1000);
+Nslid =  500;
+zd = 0.15+linspace(0,0.8,500);
 A1 = zeros(N,N,Nslid);
 Exy = zeros(N,N,Nslid);
 Eyz = zeros(N,Nslid);
@@ -47,13 +51,13 @@ for slid = 1:1:Nslid
     imagesc(zd,yout(:,1),Eyz);
     colormap("hot");
     xlabel('Z');
-    ylabel('Y')    
+    ylabel('Y');    
     %           axis equal 
     pause(eps)
 
 end
 
-% z0 = 0.2;
+% z0 = 0.5;
 % [xout,yout] = meshgrid(lam*z0*fx,lam*z0*fy);    
 % F0(:,:) = exp(1i*k*z0)/(1i*lam*z0)*exp(1i*k/2/z0*(xout.^2+yout.^2));    
 % F(:,:) = exp(1i*pi/(lam*z0).*(x0.^2+y0.^2));    
