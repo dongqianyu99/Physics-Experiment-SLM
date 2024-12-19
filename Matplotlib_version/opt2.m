@@ -1,13 +1,13 @@
 N = 1024;
-i = imread("triangle_aperture.png");
+i = imread("square.png");
 lev = graythresh(i);
 u = im2bw(i, lev);
 %subplot(2,2,1),imshow(u);
-lam = 532e-4;
+lam = 500e-4;
 k = 2*pi/lam;
 z = 400000;
-z1 = 400000;
-a0 = 200000;
+z1 = 300000;
+a0 = 3000000;
 x2 = 0: 1: 1023;
 y2 = 0: 1: 1023;
 for i = 1: 1: 1024
@@ -25,9 +25,10 @@ H = fftshift(fft2(h));
 A = fftshift(ifft2(H.*U));
 axis image;
 colormap("hot")
-I = abs(A)^2;
-imshow(I);
-axis image;
+I = abs(A);
+%imshow(I);
+%mesh(I);
+plot(x(1, :), I(521, :))
 % subplot(2,2,2), imshow(I);
 % colormap("hot")
 % subplot(2,2,3), mesh(I);

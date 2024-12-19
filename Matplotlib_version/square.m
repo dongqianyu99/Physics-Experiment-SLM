@@ -1,6 +1,6 @@
 % 设置图像尺寸和孔的大小
 N = 1024;  % 图像尺寸
-hole_size = 40;  % 方孔的大小（边长）
+hole_size = 80;  % 方孔的大小（边长）
 
 % 创建一个全黑的图像
 image = zeros(N, N);
@@ -14,7 +14,6 @@ image(center - half_hole_size : center + half_hole_size - 1, center - half_hole_
 
 % 显示图像
 imshow(image);
-title('图像中间的方孔');
 colormap(gray);  % 使用灰度色图
 axis equal;  % 保持纵横比
 imwrite(image, 'square.png');

@@ -33,37 +33,39 @@ Ein = U1.*u;
 
 %Ein = Ain*exp(-1i*(pi/(lam))*((x0.^2+y0.^2)./f)); 
 
-Nslid =  500;
-zd = 0.15+linspace(0,0.8,500);
+Nslid =  200;
+zd = 0.09+linspace(0,0.5,200);
 A1 = zeros(N,N,Nslid);
 Exy = zeros(N,N,Nslid);
 Eyz = zeros(N,Nslid);
 figure('color','white')
 
 
-for slid = 1:1:Nslid
-    [xout,yout] = meshgrid(lam*zd(slid)*fx,lam*zd(slid)*fy);    
-    F0(:,:,slid) = exp(1i*k*zd(slid))/(1i*lam*zd(slid))*exp(1i*k/2/zd(slid)*(xout.^2+yout.^2));  
-    F(:,:,slid) = exp(1i*pi/(lam*zd(slid)).*(x0.^2+y0.^2));    
-    Exy(:,:,slid) = abs(F0(:,:,slid).*fftshift(fft2(fftshift(Ein.*F(:,:,slid)))))^2;    
-    Eyz(:,slid)=Exy(1,:,slid);
-
-    imagesc(zd,yout(:,1),Eyz);
-    colormap("hot");
-    xlabel('Z');
-    ylabel('Y');    
-    %           axis equal 
-    pause(eps)
-
-end
-
-% z0 = 0.5;
-% [xout,yout] = meshgrid(lam*z0*fx,lam*z0*fy);    
-% F0(:,:) = exp(1i*k*z0)/(1i*lam*z0)*exp(1i*k/2/z0*(xout.^2+yout.^2));    
-% F(:,:) = exp(1i*pi/(lam*z0).*(x0.^2+y0.^2));    
-% xy(:,:) = abs(F0(:,:).*fftshift(fft2(fftshift(Ein.*F(:,:)))));
-% %mesh(xy)
+% for slid = 1:1:Nslid
+%     % [xout,yout] = meshgrid(lam*zd(slid)*fx,lam*zd(slid)*fy);    
+%     [xout, yout] = meshgrid(linspace(-N, N, N));
+%     F0(:,:,slid) = exp(1i*k*zd(slid))/(1i*lam*zd(slid))*exp(1i*k/2/zd(slid)*(xout.^2+yout.^2));  
+%     F(:,:,slid) = exp(1i*pi/(lam*zd(slid)).*(x0.^2+y0.^2));    
+%     Exy(:,:,slid) = abs(F0(:,:,slid).*fftshift(fft2(fftshift(Ein.*F(:,:,slid)))))^2;    
+%     Eyz(:,slid)=Exy(:,N/2+1,slid);
+%     %Eyz(:,slid)=Exy(:,1,slid);
 % 
-% imagesc(xout(1,:),yout(:,1),xy(:,:));    
-% colormap("hot");xlabel('X');ylabel('Y')    
-% axis equal;
+%     imagesc(zd,yout(:,1),Eyz);
+%     colormap("hot");  
+%     %           axis equal 
+%     %axis off;
+%     pause(eps)
+% 
+% end
+
+z0 = 0.3030;
+% [xout,yout] = meshgrid(lam*z0*fx,lam*z0*fy);   
+[xout, yout] = meshgrid(linspace(-N, N, N));
+F0(:,:) = exp(1i*k*z0)/(1i*lam*z0)*exp(1i*k/2/z0*(xout.^2+yout.^2));    
+F(:,:) = exp(1i*pi/(lam*z0).*(x0.^2+y0.^2));    
+xy(:,:) = abs(F0(:,:).*fftshift(fft2(fftshift(Ein.*F(:,:)))));
+%mesh(xy)
+imagesc(xout(1,:),yout(:,1),xy(:,:));    
+colormap("hot");xlabel('X');ylabel('Y')    
+axis off;
+axis equal;
